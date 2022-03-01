@@ -27,7 +27,7 @@
 
 <body>
     <nav class="navbar navbar-light navbar-expand-lg navigation-clean">
-        <div class="container"><a class="navbar-brand" href="api.html">DDHelper</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div class="container"><a class="navbar-brand" href="api.html">DDHelper api</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"></li>
@@ -40,7 +40,7 @@
         </div>
     </nav>
     <section class="login-dark">
-        <form method="post" action="https://api.ddhelper.live:5500/addimage" enctype="multipart/form-data">
+        <form method="post" action="https://ddhelper.live/addimage" enctype="multipart/form-data">
             <h2 class="visually-hidden">Login Form</h2>
             <div class="illustration"><i class="icon ion-image"></i><input class="form-control" type="file" name="photo"></div>
             <div class="mb-3"></div><select class="form-select" name="tag">
@@ -51,7 +51,7 @@
         <option value="other">other</option>
     </optgroup>
 </select>
-            <div class="mb-3"></div><label class="form-label">自選分類</label><input class="form-control" type="text" placeholder="example: fbk" name="selftag">
+            <div class="mb-3"></div><label class="form-label">自選分類</label><input class="form-control" type="text" placeholder="example: fbk fox" name="selftag">
             <div class="mb-3"></div>
             <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-1" value="True" name="isnsfw"><label class="form-check-label" for="formCheck-1">nsfw</label></div>
             <div class="mb-3"><button class="btn btn-primary d-block w-100" type="submit">send file</button></div><a class="forgot" href="#">Do not send any 18G image</a>
