@@ -14,7 +14,14 @@
 
 	let filteredStreams = $derived(() => {
 		let liveStreams = streams.filter((stream) => stream.status === 'LIVE');
-		let filtered = liveStreams.filter(
+		const uniqueStreams = liveStreams.reduce((acc, stream) => {
+			if (!acc.find(s => s.video_id === stream.video_id)) {
+				acc.push(stream);
+			}
+			return acc;
+		}, [] as LiveStream[]);
+
+		let filtered = uniqueStreams.filter(
 			(stream) =>
 				stream.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
 				stream.channel.toLowerCase().includes(searchTerm.toLowerCase())
@@ -149,7 +156,7 @@
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-			{#each filteredStreams() as stream (stream.video_id)}
+			{#each filteredStreams() as stream (`${stream.video_id}-${stream.platform}`)}
 				<StreamCard {stream} />
 			{/each}
 		</div>

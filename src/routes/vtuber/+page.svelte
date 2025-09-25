@@ -18,14 +18,23 @@
 	$: countries = [...new Set(vtubers.map((v) => v.country))].sort();
 	$: statuses = [...new Set(vtubers.map((v) => v.activity_status))].sort();
 
-	$: filteredVtubers = vtubers.filter((vtuber) => {
-		const matchesSearch = vtuber.name.toLowerCase().includes(searchTerm.toLowerCase());
-		const matchesCompany = !selectedCompany || vtuber.company === selectedCompany;
-		const matchesCountry = !selectedCountry || vtuber.country === selectedCountry;
-		const matchesStatus = !selectedStatus || vtuber.activity_status === selectedStatus;
+	$: filteredVtubers = (() => {
+		const uniqueVtubers = vtubers.reduce((acc, vtuber) => {
+			if (!acc.find((v) => v.channel_id === vtuber.channel_id)) {
+				acc.push(vtuber);
+			}
+			return acc;
+		}, [] as VTuber[]);
 
-		return matchesSearch && matchesCompany && matchesCountry && matchesStatus;
-	});
+		return uniqueVtubers.filter((vtuber) => {
+			const matchesSearch = vtuber.name.toLowerCase().includes(searchTerm.toLowerCase());
+			const matchesCompany = !selectedCompany || vtuber.company === selectedCompany;
+			const matchesCountry = !selectedCountry || vtuber.country === selectedCountry;
+			const matchesStatus = !selectedStatus || vtuber.activity_status === selectedStatus;
+
+			return matchesSearch && matchesCompany && matchesCountry && matchesStatus;
+		});
+	})();
 
 	async function loadVTubers() {
 		try {
@@ -151,7 +160,7 @@
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-			{#each filteredVtubers as vtuber (vtuber.channel_id || vtuber.name)}
+			{#each filteredVtubers as vtuber, index (`${vtuber.channel_id || vtuber.name}-${index}`)}
 				<VTuberCard {vtuber} />
 			{/each}
 		</div>
