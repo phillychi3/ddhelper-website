@@ -1,7 +1,7 @@
 import type { LiveStream, VTuber } from './types.js';
 
-const API_URL = 'http://141.147.153.185:7600/live';
-const VTUBER_API_URL = 'http://141.147.153.185:7600/allvtuber';
+const API_URL = 'https://ddapi.cloudowo.com/live';
+const VTUBER_API_URL = 'https://ddapi.cloudowo.com/allvtuber';
 
 export async function fetchLiveStreams(): Promise<LiveStream[]> {
 	try {
