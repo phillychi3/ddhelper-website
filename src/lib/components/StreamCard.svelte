@@ -9,6 +9,10 @@
 	let { stream }: Props = $props();
 
 	function handleCardClick() {
+		if (stream.platform === 'twitch') {
+			window.open(stream.channel, '_blank');
+			return;
+		}
 		window.open(getYouTubeUrl(stream.video_id), '_blank');
 	}
 
@@ -34,7 +38,14 @@
 		/>
 
 		<div class="absolute top-2 left-2">
-			<span class="flex items-center rounded bg-red-600 px-2 py-1 text-xs font-bold text-white">
+			<span
+				class="flex items-center rounded px-2 py-1 text-xs font-bold text-white {stream.platform ===
+				'youtube'
+					? 'bg-red-600'
+					: stream.platform === 'twitch'
+						? 'bg-purple-600'
+						: 'bg-gray-600'}"
+			>
 				<span class="mr-1 h-2 w-2 animate-pulse rounded-full bg-white"></span>
 				LIVE
 			</span>
