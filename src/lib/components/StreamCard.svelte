@@ -8,6 +8,16 @@
 
 	let { stream }: Props = $props();
 
+	function formatNumber(num: number): string {
+		if (num >= 1000000) {
+			return (num / 1000000).toFixed(1) + 'M';
+		}
+		if (num >= 1000) {
+			return (num / 1000).toFixed(1) + 'K';
+		}
+		return num.toString();
+	}
+
 	function handleCardClick() {
 		if (stream.platform === 'twitch') {
 			window.open(stream.channel, '_blank');
@@ -73,17 +83,30 @@
 			{formatTitle(stream.title)}
 		</h3>
 
-		<button
-			class="flex items-center space-x-2 text-sm font-medium text-gray-300 transition-colors hover:text-blue-400"
-			onclick={handleChannelClick}
-		>
-			<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-				<path
-					d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-				/>
-			</svg>
-			<span class="truncate">{getChannelName(stream.channel)}</span>
-		</button>
+		{#if stream.vtuber}
+			<div class="mb-3 flex items-center space-x-2">
+				<div class="min-w-0 flex-1">
+					<button
+						class="block truncate text-sm font-medium text-gray-300 transition-colors hover:text-blue-400"
+						onclick={handleChannelClick}
+					>
+						{stream.vtuber.name}
+					</button>
+				</div>
+			</div>
+		{:else}
+			<button
+				class="flex items-center space-x-2 text-sm font-medium text-gray-300 transition-colors hover:text-blue-400"
+				onclick={handleChannelClick}
+			>
+				<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+					<path
+						d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+					/>
+				</svg>
+				<span class="truncate">{getChannelName(stream.channel)}</span>
+			</button>
+		{/if}
 
 		<div class="mt-3 flex items-center justify-between text-xs text-gray-400">
 			<span class="capitalize">{stream.platform}</span>

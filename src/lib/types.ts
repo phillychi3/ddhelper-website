@@ -6,6 +6,7 @@ export interface LiveStream {
 	thumbnail: string;
 	platform: 'youtube' | 'twitch' | 'bilibili';
 	timestamp: string | null;
+	vtuber?: VTuber;
 }
 
 export interface ApiResponse {
