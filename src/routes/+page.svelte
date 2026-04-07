@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { LiveStream } from '$lib/types.js';
-	import { fetchLiveStreams } from '$lib/api.js';
+	import { fetchLiveStreams, getTimestampMs } from '$lib/api.js';
 	import StreamCard from '$lib/components/StreamCard.svelte';
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
@@ -13,9 +13,10 @@
 	let sortBy = $state<'title' | 'channel' | 'recent'>('recent');
 
 	let filteredStreams = $derived(() => {
-		let liveStreams = streams.filter((stream) => stream.status === 'LIVE');
+		const validStatuses: LiveStream['status'][] = ['LIVE', 'READY_TO_LIVE'];
+		let liveStreams = streams.filter((stream) => validStatuses.includes(stream.status));
 		const uniqueStreams = liveStreams.reduce((acc, stream) => {
-			if (!acc.find(s => s.video_id === stream.video_id)) {
+			if (!acc.find((s) => s.video_id === stream.video_id)) {
 				acc.push(stream);
 			}
 			return acc;
@@ -34,7 +35,20 @@
 				return filtered.sort((a, b) => a.channel.localeCompare(b.channel));
 			case 'recent':
 			default:
-				return filtered;
+				return filtered.sort((a, b) => {
+					if (a.status !== b.status) {
+						return a.status === 'LIVE' ? -1 : 1;
+					}
+
+					const timeA = getTimestampMs(a.timestamp) ?? 0;
+					const timeB = getTimestampMs(b.timestamp) ?? 0;
+
+					if (a.status === 'READY_TO_LIVE') {
+						return timeA - timeB;
+					}
+
+					return timeB - timeA;
+				});
 		}
 	});
 
@@ -150,7 +164,7 @@
 				</svg>
 				<h3 class="mb-2 text-lg font-medium text-gray-300">目前沒有直播</h3>
 				<p class="text-sm text-gray-400">
-					{searchTerm ? '沒有符合搜尋條件的直播' : '所有 VTuber 都不在線上'}
+					{searchTerm ? '沒有符合搜尋條件的直播' : '目前沒有直播中或即將直播的節目'}
 				</p>
 			</div>
 		</div>

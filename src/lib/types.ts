@@ -5,7 +5,7 @@ export interface LiveStream {
 	title: string;
 	thumbnail: string;
 	platform: 'youtube' | 'twitch' | 'bilibili';
-	timestamp: string | null;
+	timestamp: string | number | null;
 	vtuber?: VTuber;
 }
 

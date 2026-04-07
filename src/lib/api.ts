@@ -1,6 +1,6 @@
 import type { LiveStream, VTuber } from './types.js';
 
-const API_URL = 'https://ddapi.cloudowo.com/live';
+const API_URL = 'https://ddapi.cloudowo.com/live?status=ALL';
 const VTUBER_API_URL = 'https://ddapi.cloudowo.com/allvtuber';
 
 export async function fetchLiveStreams(): Promise<LiveStream[]> {
@@ -54,6 +54,83 @@ export function getRelativeTime(timestamp: string | null): string {
 	if (diffMins < 60) return `${diffMins} 分鐘前開始`;
 	if (diffHours < 24) return `${diffHours} 小時前開始`;
 	return `${diffDays} 天前開始`;
+}
+
+export function getTimestampMs(timestamp: string | number | null): number | null {
+	if (timestamp === null || timestamp === undefined) {
+		return null;
+	}
+
+	if (typeof timestamp === 'number') {
+		if (!Number.isFinite(timestamp)) {
+			return null;
+		}
+		return timestamp < 1000000000000 ? timestamp * 1000 : timestamp;
+	}
+
+	const numericTimestamp = Number(timestamp);
+	if (Number.isFinite(numericTimestamp) && timestamp.trim() !== '') {
+		return numericTimestamp < 1000000000000 ? numericTimestamp * 1000 : numericTimestamp;
+	}
+
+	const parsed = Date.parse(timestamp);
+	return Number.isNaN(parsed) ? null : parsed;
+}
+
+export function getScheduledStartText(timestamp: string | number | null): string {
+	const timestampMs = getTimestampMs(timestamp);
+	if (!timestampMs) {
+		return '開播時間待定';
+	}
+
+	const startDate = new Date(timestampMs);
+	const now = new Date();
+	const isToday = startDate.toDateString() === now.toDateString();
+
+	if (isToday) {
+		return `今天 ${new Intl.DateTimeFormat('zh-TW', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		}).format(startDate)} 開始`;
+	}
+
+	return `${new Intl.DateTimeFormat('zh-TW', {
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false
+	}).format(startDate)} 開始`;
+}
+
+export function getLiveDurationText(
+	timestamp: string | number | null,
+	nowMs: number = Date.now()
+): string {
+	const timestampMs = getTimestampMs(timestamp);
+	if (!timestampMs) {
+		return '直播中';
+	}
+
+	const diffMs = nowMs - timestampMs;
+	if (diffMs <= 0) {
+		return '直播中';
+	}
+
+	const totalMinutes = Math.floor(diffMs / 60000);
+	if (totalMinutes < 1) {
+		return '已直播 1 分鐘內';
+	}
+
+	const hours = Math.floor(totalMinutes / 60);
+	const minutes = totalMinutes % 60;
+
+	if (hours === 0) {
+		return `已直播 ${minutes} 分鐘`;
+	}
+
+	return `已直播 ${hours} 小時 ${minutes} 分鐘`;
 }
 
 export function extractChannelId(channelUrl: string): string {

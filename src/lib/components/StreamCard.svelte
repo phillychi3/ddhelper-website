@@ -1,12 +1,20 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { LiveStream } from '$lib/types.js';
-	import { getYouTubeUrl, getChannelName, formatTitle } from '$lib/api.js';
+	import {
+		getYouTubeUrl,
+		getChannelName,
+		formatTitle,
+		getScheduledStartText,
+		getLiveDurationText
+	} from '$lib/api.js';
 
 	interface Props {
 		stream: LiveStream;
 	}
 
 	let { stream }: Props = $props();
+	let nowMs = $state(Date.now());
 
 	function formatNumber(num: number): string {
 		if (num >= 1000000) {
@@ -30,10 +38,28 @@
 		event.stopPropagation();
 		window.open(stream.channel, '_blank');
 	}
+
+	function getStatusLabel(stream: LiveStream): string {
+		return stream.status === 'READY_TO_LIVE' ? '即將直播' : '直播中';
+	}
+
+	function getStatusTimeText(stream: LiveStream): string {
+		return stream.status === 'READY_TO_LIVE'
+			? getScheduledStartText(stream.timestamp)
+			: getLiveDurationText(stream.timestamp, nowMs);
+	}
+
+	onMount(() => {
+		const timer = setInterval(() => {
+			nowMs = Date.now();
+		}, 60000);
+
+		return () => clearInterval(timer);
+	});
 </script>
 
 <div
-	class="group cursor-pointer overflow-hidden rounded-lg bg-slate-800 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+	class="group flex h-full cursor-pointer flex-col overflow-hidden rounded-lg bg-slate-800 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
 	onclick={handleCardClick}
 	role="button"
 	tabindex="0"
@@ -49,15 +75,19 @@
 
 		<div class="absolute top-2 left-2">
 			<span
-				class="flex items-center rounded px-2 py-1 text-xs font-bold text-white {stream.platform ===
-				'youtube'
-					? 'bg-red-600'
-					: stream.platform === 'twitch'
-						? 'bg-purple-600'
-						: 'bg-gray-600'}"
+				class="flex items-center rounded px-2 py-1 text-xs font-bold text-white {stream.status ===
+				'READY_TO_LIVE'
+					? 'bg-amber-500'
+					: stream.platform === 'youtube'
+						? 'bg-red-600'
+						: stream.platform === 'twitch'
+							? 'bg-purple-600'
+							: 'bg-gray-600'}"
 			>
-				<span class="mr-1 h-2 w-2 animate-pulse rounded-full bg-white"></span>
-				LIVE
+				{#if stream.status === 'LIVE'}
+					<span class="mr-1 h-2 w-2 animate-pulse rounded-full bg-white"></span>
+				{/if}
+				{getStatusLabel(stream)}
 			</span>
 		</div>
 
@@ -78,7 +108,7 @@
 		</div>
 	</div>
 
-	<div class="p-4">
+	<div class="flex flex-1 flex-col p-4">
 		<h3 class="mb-2 line-clamp-2 text-sm leading-tight font-medium text-white">
 			{formatTitle(stream.title)}
 		</h3>
@@ -108,9 +138,11 @@
 			</button>
 		{/if}
 
-		<div class="mt-3 flex items-center justify-between text-xs text-gray-400">
+		<div class="mt-auto flex items-center justify-between pt-3 text-xs text-gray-400">
 			<span class="capitalize">{stream.platform}</span>
-			<span class="text-green-400">● {stream.status}</span>
+			<span class={stream.status === 'READY_TO_LIVE' ? 'text-amber-300' : 'text-green-400'}>
+				{getStatusTimeText(stream)}
+			</span>
 		</div>
 	</div>
 </div>
