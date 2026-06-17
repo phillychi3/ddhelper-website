@@ -11,7 +11,7 @@
 	<meta name="description" content="Vtuber Live Streams" />
 </svelte:head>
 
-<div class="min-h-screen bg-slate-900 text-white">
+<div class="min-h-screen bg-slate-950 text-white">
 	<header class="sticky top-0 z-50 border-b border-slate-700 bg-slate-800">
 		<div class="container mx-auto px-4 py-3">
 			<div class="flex items-center justify-between">

@@ -80,7 +80,7 @@
 
 <div class="space-y-6">
 	<div
-		class="flex flex-col items-center justify-between gap-4 rounded-lg bg-slate-800 p-4 md:flex-row"
+		class="flex flex-col items-center justify-between gap-4 rounded-lg bg-slate-900 p-4 md:flex-row"
 	>
 		<div class="relative max-w-md flex-1">
 			<input
@@ -148,7 +148,7 @@
 		<ErrorMessage {error} onRetry={handleRetry} />
 	{:else if filteredStreams().length === 0}
 		<div class="py-12 text-center">
-			<div class="mx-auto max-w-md rounded-lg bg-slate-800 p-8">
+			<div class="mx-auto max-w-md rounded-lg bg-slate-900 p-8">
 				<svg
 					class="mx-auto mb-4 h-16 w-16 text-gray-400"
 					fill="none"

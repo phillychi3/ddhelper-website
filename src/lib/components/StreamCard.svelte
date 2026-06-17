@@ -59,7 +59,7 @@
 </script>
 
 <div
-	class="group flex h-full cursor-pointer flex-col overflow-hidden rounded-lg bg-slate-800 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+	class="group flex h-full cursor-pointer flex-col overflow-hidden rounded-lg bg-slate-900 shadow-lg"
 	onclick={handleCardClick}
 	role="button"
 	tabindex="0"
